@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./lib/onui.css">
+    <script src="./lib/onui.js"></script>
+    <script src="main.js"></script>
+    <title>Location Data Generator</title>
+</head>
+
+<body>
+    <div id="ui">
+        <div class="container">
+            <input type="datetime" id="start-date" value="">
+            <input type="datetime" id="end-date" value="">
+        </div>
+
+        <div class="container">
+            <div>Trajectory List</div>
+            <div id="traj-list"></div>
+        </div>
+
+        <div class="container">
+            <label for="point-buff">Buffer : <span>0</span> deg</label>
+            <input type="range" id="point-buff" min="0" max="1.0" value="0" step="0.01">
+        </div>
+
+        <div class="container">
+            <label for="trajectory-num">Traj-N : <span>1</span></label>
+            <input type="range" id="trajectory-num" min="1" max="100" value="1">
+        </div>
+
+        <div class="container">
+            <onui type="toggle-switch" id="interpolation"></onui>
+            <label for="interpolation">Interpolation</label>
+        </div>
+
+        <div class="container">
+            <label for="trajectory-div-num">Division : <span>1</span></label>
+            <input type="range" id="trajectory-div-num" min="1" max="100" value="1">
+        </div>
+
+        <div class="container"></div>
+
+        <div class="container">
+            <button id="generate">Generete</button>
+        </div>
+
+        <div class="container">
+            <select id="file-format">
+                <option value="csv">csv</option>
+            </select>
+            <button id="save-file">Save file</button>
+        </div>
+    </div>
+    <div id="map"></div>
+
+    <div id="traj-modal">
+        <button id="traj-register">OK (enter)</button>
+    </div>
+</body>
+
+</html>
