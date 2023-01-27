@@ -14,47 +14,70 @@
 
 <body>
     <div id="ui">
-        <div class="container">
-            <input type="datetime" id="start-date" value="">
-            <input type="datetime" id="end-date" value="">
+        <div class="pane">
+            <div style="font-size: 80%;">
+                <div style="font-weight: bold;">Location Data Generator</div>
+                <div><a href="https://github.com/tomoya-onuki/locationDataGenerator">GitHub</a></div>
+                <div>&copy; 2023 Tomoya Onuki.</div>
+            </div>
         </div>
 
-        <div class="container">
-            <div>Trajectory List</div>
-            <div id="traj-list"></div>
+        <div class="pane">
+            <div class="container">
+                <div>Trajectory List</div>
+                <div id="traj-list"></div>
+                <onui type="toggle-switch" id="auto-color"></onui>
+                <label for="auto-color">auto color scheme</label>
+            </div>
         </div>
 
-        <div class="container">
-            <label for="point-buff">Buffer : <span>0</span> deg</label>
-            <input type="range" id="point-buff" min="0" max="1.0" value="0" step="0.01">
+        <div class="pane">
+            <div class="container">
+                <onui type="toggle-switch" id="interpolation"></onui>
+                <label for="interpolation">Interpolation</label>
+            </div>
+
+            <div class="container">
+                <label for="rediction-rate">Reduction : <span>0</span> %</label>
+                <input type="range" id="rediction-rate" min="0" max="100" value="0" step="1">
+            </div>
         </div>
 
-        <div class="container">
-            <label for="trajectory-num">Traj-N : <span>1</span></label>
-            <input type="range" id="trajectory-num" min="1" max="100" value="1">
+
+
+        <div class="pane">
+            <div class="container">
+                <div>Date</div>
+                <input type="datetime" id="start-date" value="">
+                <input type="datetime" id="end-date" value="">
+            </div>
         </div>
 
-        <div class="container">
-            <onui type="toggle-switch" id="interpolation"></onui>
-            <label for="interpolation">Interpolation</label>
+        <div class="pane">
+            <div class="container">
+                <label for="point-buff">Buffer : <span>0</span> deg</label>
+                <input type="range" id="point-buff" min="0" max="1.0" value="0" step="0.01">
+            </div>
+
+            <div class="container">
+                <label for="trajectory-num">Traj-N : <span>1</span></label>
+                <input type="range" id="trajectory-num" min="1" max="100" value="1">
+            </div>
+
+            <div class="container"></div>
+
+            <div class="container">
+                <button id="generate">Generete</button>
+            </div>
         </div>
 
-        <div class="container">
-            <label for="trajectory-div-num">Division : <span>1</span></label>
-            <input type="range" id="trajectory-div-num" min="1" max="100" value="1">
-        </div>
-
-        <div class="container"></div>
-
-        <div class="container">
-            <button id="generate">Generete</button>
-        </div>
-
-        <div class="container">
-            <select id="file-format">
-                <option value="csv">csv</option>
-            </select>
-            <button id="save-file">Save file</button>
+        <div class="pane">
+            <div class="container">
+                <select id="file-format">
+                    <option value="csv">csv</option>
+                </select>
+                <button id="save-file">Save file</button>
+            </div>
         </div>
     </div>
     <div id="map"></div>

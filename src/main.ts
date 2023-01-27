@@ -1,9 +1,8 @@
 import mapboxgl, { GeoJSONSource, GeoJSONSourceRaw } from 'mapbox-gl';
-import chroma from 'chroma-js';
-import turfCircle from '@turf/circle'
-import turfBuffer from '@turf/buffer'
-import { point } from '@turf/helpers'
+import chroma, { interpolate } from 'chroma-js';
+import turfCircle from '@turf/circle';
 import { Traj } from './Traj';
+import { TrajGroup } from './TrajGroup';
 // import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoib251dG9tbyIsImEiOiJjbGQycHIwazMwYXh5M29tcW95Nm5tdmVxIn0.nK-_6PZCDCVPEYiLQANo7A';
@@ -14,23 +13,28 @@ window.addEventListener('load', () => {
 
 class Main {
     private map: mapboxgl.Map;
-    private baseTrajList: { [key: number]: Traj } = {};
-    private subTrajList: { [key: number]: Traj[] } = {};
+    private trajGroupList: TrajGroup[] = [];
     private pointBuff: number = 0;
     private trajN: number = 1;
+    private trajID: number = 0;
 
     constructor() {
         this.map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [139.7670516, 35.6811673],
+            style: 'mapbox://styles/mapbox/dark-v10',
+            center: [140, 42],
             zoom: 4
         });
     }
 
+    private initTrajList() {
+        this.trajGroupList.push(new TrajGroup(this.trajID));
+        this.trajID++;
+    }
+
     public init(): void {
-        let len = Object.keys(this.baseTrajList).length;
-        this.baseTrajList[len] = new Traj();
+        this.initTrajList();
+
 
         this.map.on('load', () => {
             this.initEventLister();
@@ -47,7 +51,7 @@ class Main {
                 'type': "fill",
                 'source': 'bufferArea',
                 'paint': {
-                    "fill-color": "#444",
+                    "fill-color": "#ddd",
                     "fill-opacity": 0.3
                 }
             });
@@ -66,7 +70,7 @@ class Main {
                 'paint': {
                     'line-width': 2,
                     'line-color': ['get', 'color'],
-                    'line-opacity': 0.6
+                    'line-opacity': 0.3
                 }
             });
 
@@ -115,25 +119,10 @@ class Main {
         // ベースラインに合わせてランダムで複数の軌跡を生成
         const $geneBtn: HTMLButtonElement = <HTMLButtonElement>document.querySelector('#generate');
         $geneBtn.addEventListener('click', () => {
-            Object.keys(this.baseTrajList).forEach((key) => {
-                const idx = Number(key);
-                const traj = this.baseTrajList[idx];
-                const newTrajList: Traj[] = [];
-                for (let i = 0; i < this.trajN; i++) {
-                    const newTraj: Traj = new Traj();
-                    newTraj.color = chroma(traj.color).brighten(2).name();
-                    newTraj.pointList = traj.pointList.map(point => {
-                        return {
-                            lng: point.lng + (Math.random() - 0.5) * this.pointBuff,
-                            lat: point.lat + (Math.random() - 0.5) * this.pointBuff
-                        };
-                    });
-                    newTrajList.push(newTraj);
-                }
-
-                this.subTrajList[idx] = newTrajList;
+            this.trajGroupList.forEach((trajGroup) => {
+                trajGroup.generateSubTrajList(this.trajN, this.pointBuff)
             });
-
+            this.interpolate();
             this.drawLines();
         });
 
@@ -147,14 +136,14 @@ class Main {
         });
 
         this.map.on('click', (e) => {
-            if (Object.keys(this.baseTrajList).length > 0) {
-                // 末尾の軌跡に座標を追加していく
-                let last: number = Object.keys(this.baseTrajList).length - 1;
-                this.baseTrajList[last].color = '#222';
-                this.baseTrajList[last].add({
+            if (this.trajGroupList.length > 0) {
+                let last: number = this.trajGroupList.length - 1;
+                this.trajGroupList[last].baseTraj.add({
                     lng: Number(e.lngLat.wrap().lng),
                     lat: Number(e.lngLat.wrap().lat)
                 });
+                this.colored();
+                this.interpolate();
                 this.drawLines();
             }
         });
@@ -168,35 +157,51 @@ class Main {
                 this.registerBaseTraj();
             }
         });
+
+        const $autoColorScheme: HTMLInputElement = <HTMLInputElement>document.querySelector('#auto-color');
+        $autoColorScheme.addEventListener('input', () => {
+            this.colored();
+            this.drawLines();
+        });
+
+        const $interpolation: HTMLInputElement = <HTMLInputElement>document.querySelector('#interpolation');
+        $interpolation.addEventListener('input', () => {
+            this.interpolate();
+            this.drawLines();
+        });
+        const $reductionRate: HTMLInputElement = <HTMLInputElement>document.querySelector('#rediction-rate');
+        $reductionRate.addEventListener('input', () => {
+            this.interpolate();
+            this.drawLines();
+        });
     }
 
     private drawLines(): void {
         const baseGeojson: any = {
             'type': 'FeatureCollection',
-            'features': Object.keys(this.baseTrajList).map(key => {
-                return this.baseTrajList[Number(key)].feature();
+            'features': this.trajGroupList.map(trajGroup => {
+                return trajGroup.baseTraj.feature();
             })
         };
 
         const subGeojson: any = {
             'type': 'FeatureCollection',
-            'features': Object.keys(this.subTrajList).map(key => {
-                return this.subTrajList[Number(key)].map(traj => traj.feature());
+            'features': this.trajGroupList.map(trajGroup => {
+                return trajGroup.subTrajListFeatures();
             }).flat()
         };
 
         // Buffer範囲を描画
         const bufAreaGeojson: any = {
             'type': 'FeatureCollection',
-            'features': Object.keys(this.baseTrajList).map(key => {
-                return this.baseTrajList[Number(key)].pointList.map(point => {
+            'features': this.trajGroupList.map(trajGroup => {
+                return trajGroup.baseTraj.pointList.map(point => {
                     let radius: number = this.pointBuff;
                     let center: number[] = [point.lng, point.lat];
                     return turfCircle(center, radius, { steps: 64, units: 'degrees' });
                 });
             }).flat()
         };
-
         let baseLineSource: GeoJSONSource = <GeoJSONSource>this.map.getSource('baseLines');
         let subLineSource: GeoJSONSource = <GeoJSONSource>this.map.getSource('subLines');
         let buffAreaSource: GeoJSONSource = <GeoJSONSource>this.map.getSource('bufferArea');
@@ -204,10 +209,32 @@ class Main {
         baseLineSource.setData(baseGeojson);
         subLineSource.setData(subGeojson);
         buffAreaSource.setData(bufAreaGeojson);
-        // console.log(mapSource);
-        // console.log(geojson);
-        console.log(this.baseTrajList);
-        console.log(this.subTrajList);
+    }
+
+    private interpolate() {
+        const $interpolation: HTMLInputElement = <HTMLInputElement>document.querySelector('#interpolation');
+        const $reductionRate: HTMLInputElement = <HTMLInputElement>document.querySelector('#rediction-rate');
+        const flag: boolean = Boolean($interpolation.checked);
+        const rate: number = Number($reductionRate.value) / 100;
+        this.trajGroupList.forEach(trajGroup => {
+            trajGroup.isInterpolation = flag;
+            trajGroup.interpolationReductionRate = rate;
+        });
+    }
+
+    private colored() {
+        const $autoColorScheme: HTMLInputElement = <HTMLInputElement>document.querySelector('#auto-color');
+        const flag: boolean = Boolean($autoColorScheme.checked);
+        this.trajGroupList.forEach((groupTraj, i) => {
+            const h: number = i / this.trajGroupList.length * 360;
+            const color: string = flag ? chroma.hsv(h, 0.8, 1.0).name() : '#eeeeee';
+            groupTraj.color = color;
+            let $input: HTMLInputElement = <HTMLInputElement>document.querySelector(`#traj-${groupTraj.id}`);
+            if ($input != null) {
+                $input.value = color;
+            }
+
+        });
     }
 
     private registerBaseTraj() {
@@ -215,39 +242,38 @@ class Main {
         $modal.style.display = 'none';
 
         // UIに追加
-        const idx: number = Object.keys(this.baseTrajList).length - 1;
-        const id: string = `traj-${idx}`;
+        const last: number = this.trajGroupList.length - 1;
+        const id: number = this.trajGroupList[last].id;
         const $trajItem: HTMLElement = document.createElement('div');
         $trajItem.className = 'traj-item';
+
         const $trajItemColor: HTMLInputElement = document.createElement('input');
         $trajItemColor.setAttribute('type', 'color');
-        $trajItemColor.setAttribute('id', id);
+        $trajItemColor.setAttribute('id', `traj-${id}`);
+        $trajItemColor.value = this.trajGroupList[last].color;
         $trajItemColor.addEventListener('input', () => {
-            this.baseTrajList[idx].color = chroma($trajItemColor.value).name();
-            this.subTrajList[idx].forEach(traj => {
-                traj.color = chroma($trajItemColor.value).brighten(2).name();
-            });
+            this.trajGroupList[last].baseTraj.color = chroma($trajItemColor.value).css();
             this.drawLines();
         });
+
         const $trajItemLabel: HTMLLabelElement = document.createElement('label');
-        $trajItemLabel.setAttribute('for', id);
-        $trajItemLabel.textContent = '#' + (`000${idx}`.slice(-3));
+        $trajItemLabel.setAttribute('for', `traj-${id}`);
+        $trajItemLabel.textContent = '#' + (`000${id}`.slice(-3));
         const $trajItemDelBtn: HTMLButtonElement = document.createElement('button');
         $trajItemDelBtn.textContent = 'del';
         $trajItemDelBtn.addEventListener('click', () => {
-            delete this.baseTrajList[idx];
-            delete this.subTrajList[idx];
+            this.trajGroupList = this.trajGroupList.filter(trajgroup => trajgroup.id !== id);
             $trajItem.remove();
-            let len = Object.keys(this.baseTrajList).length;
-            this.baseTrajList[len] = new Traj();
             this.drawLines();
         });
+
         const $trajItemRstBtn: HTMLButtonElement = document.createElement('button');
         $trajItemRstBtn.textContent = 'rst';
         $trajItemRstBtn.addEventListener('click', () => {
-            delete this.subTrajList[idx];
+            this.trajGroupList[last].clearSubTrajList();
             this.drawLines();
         });
+
         $trajItem.appendChild($trajItemColor);
         $trajItem.appendChild($trajItemLabel);
         $trajItem.appendChild($trajItemRstBtn);
@@ -258,7 +284,6 @@ class Main {
         this.drawLines();
 
         // 次に追加する軌跡
-        let len = Object.keys(this.baseTrajList).length;
-        this.baseTrajList[len] = new Traj();
+        this.initTrajList();
     }
 }
