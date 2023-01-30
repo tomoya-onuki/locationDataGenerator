@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./lib/onui.css">
     <script src="./lib/onui.js"></script>
@@ -15,71 +17,143 @@
 <body>
     <div id="ui">
         <div class="pane">
+            <h1>Location Data Generator</h1>
             <div style="font-size: 80%;">
-                <div style="font-weight: bold;">Location Data Generator</div>
-                <div><a href="https://github.com/tomoya-onuki/locationDataGenerator">GitHub</a></div>
-                <div>&copy; 2023 Tomoya Onuki.</div>
+                <div>
+                    <span>&copy; 2023 Tomoya Onuki.</span>
+                    <span> | </span>
+                    <a href="https://github.com/tomoya-onuki/locationDataGenerator" target="_blank">GitHub</a>
+                    <span> | </span>
+                    <span class="help">Help</span>
+                </div>
             </div>
         </div>
 
-        <div class="pane">
+        <!-- <onui type="tab" style="width:100%; font-size: 90%;">
+            <option value="Trajectory" name="pane0"></option>
+            <option value="Date" name="pane1"></option>
+            <option value="Download" name="pane2"></option>
+        </onui> -->
+
+        <div id="pane0" class="pane">
+            <h2>Trajectory</h2>
             <div class="container">
-                <div>Trajectory List</div>
+                <!-- <div>List</div> -->
                 <div id="traj-list"></div>
-                <onui type="toggle-switch" id="auto-color"></onui>
-                <label for="auto-color">auto color scheme</label>
-            </div>
-        </div>
-
-        <div class="pane">
-            <div class="container">
-                <onui type="toggle-switch" id="interpolation"></onui>
-                <label for="interpolation">Interpolation</label>
+                <div>
+                    <onui type="toggle-switch" id="auto-color"></onui>
+                    <label for="auto-color">Auto Color Scheme</label>
+                </div>
             </div>
 
             <div class="container">
-                <label for="rediction-rate">Reduction : <span>0</span> %</label>
-                <input type="range" id="rediction-rate" min="0" max="100" value="0" step="1">
+                <div>
+                    <onui type="toggle-switch" id="interpolation"></onui>
+                    <label for="interpolation">Interpolation</label>
+                </div>
+
+                <div>
+                    <label for="rediction-rate">Reduction : <span>0</span> %</label>
+                    <input type="range" id="rediction-rate" min="0" max="100" value="0" step="1">
+                </div>
             </div>
-        </div>
 
-
-
-        <div class="pane">
-            <div class="container">
-                <div>Date</div>
-                <input type="datetime" id="start-date" value="">
-                <input type="datetime" id="end-date" value="">
-            </div>
-        </div>
-
-        <div class="pane">
             <div class="container">
                 <label for="point-buff">Buffer : <span>0</span> deg</label>
                 <input type="range" id="point-buff" min="0" max="1.0" value="0" step="0.01">
-            </div>
-
-            <div class="container">
                 <label for="trajectory-num">Traj-N : <span>1</span></label>
                 <input type="range" id="trajectory-num" min="1" max="100" value="1">
-            </div>
 
-            <div class="container"></div>
-
-            <div class="container">
                 <button id="generate">Generete</button>
             </div>
         </div>
 
-        <div class="pane">
+        <div id="pane1" class="pane">
+            <h2>Date</h2>
+            <div class="container">
+                <div>
+                    <onui type="toggle-switch" id="date-form-on"></onui>
+                    <label for="date-form-on">Date Form</label>
+                </div>
+
+                <div>
+                    <onui type="toggle-switch" id="time-gradient"></onui>
+                    <label for="time-gradient">Time Encoding</label>
+                </div>
+            </div>
+
+            <div class="container">
+                <div>First date</div>
+                <input type="date" id="first-date">
+                <input type="time" id="first-time" value="00:00:00" step="1">
+            </div>
+
+            <div class="container">
+                <div>Step</div>
+                <input type="number" id="date-step" value="1">
+                <select id="date-step-unit">
+                    <option value="ms">msec</option>
+                    <option value="s">sec</option>
+                    <option value="m">min</option>
+                    <option value="h" selected>hour</option>
+                    <option value="d">day</option>
+                    <option value="w">week</option>
+                    <option value="M">month</option>
+                    <option value="y">year</option>
+                </select>
+            </div>
+        </div>
+        <!-- <div id="pane1" class="pane">
+            <h2>Date</h2>
+            <div class="container">
+                <div>
+                    <span style="width: 33px; display: inline-block;">begin</span>
+                    <input type="date" id="begin-date">
+                    <input type="time" id="begin-time">
+                </div>
+
+                <div>
+                    <span style="width: 33px; display: inline-block;">end</span>
+                    <input type="date" id="end-date">
+                    <input type="time" id="end-time">
+                </div>
+            </div>
+
+            <div class="container">
+                <div>Speed</div>
+                <canvas id="speed-cvs"></canvas>
+            </div>
+        </div> -->
+
+        <div id="pane2" class="pane">
+            <h2>Download</h2>
             <div class="container">
                 <select id="file-format">
-                    <option value="csv">csv</option>
+                    <optgroup label="Chronological trajectory">
+                        <option value="csv">CSV</option>
+                        <!-- <option value="tsv">TSV</option> -->
+                        <option value="gpx">GPX</option>
+                    </optgroup>
+                    <optgroup label="Trajectory only">
+                        <option value="kml">KML</option>
+                        <option value="geojson">GeoJson</option>
+                    </optgroup>
+                    <optgroup label="For original tool">
+                        <option value="umidori">Umidori (.csv)</option>
+                        <option value="axyvis">AxyVis (.txt)</option>
+                    </optgroup>
+                    <!-- <option value="gtfs">GTFS (.csv)</option> -->
                 </select>
                 <button id="save-file">Save file</button>
             </div>
+            <div class="container">
+                <input type="checkbox" id="file-integrate">
+                <label for="file-integrate">Integration File</label>
+                <span class="help" style="margin-left: 10px;" onclick="alert('GPS, KML, and GeoJson are recommended in the integrated file.')">Help</span>
+            </div>
         </div>
     </div>
+
     <div id="map"></div>
 
     <div id="traj-modal">

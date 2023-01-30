@@ -1,3 +1,6 @@
+/* Copyright (c) 2023 Tomoya Onuki */
+/* This software is released under the MIT License, see LICENSE. */
+
 window.addEventListener('load', () => {
     new OnUI().init();
 });
@@ -371,13 +374,13 @@ class OnUI {
                 }
 
                 $elem.querySelectorAll('option')
-                    .forEach(($item, idx) => {
-                        $item.classList.add('onui-accordion-item');
-                        $elem.appendChild($item);
-
+                    .forEach(($option, idx) => {
+                        $elem.appendChild($option);
+                        
+                        let label = $option.value;
                         const $label = document.createElement('label');
                         $label.setAttribute('for', `${id}-hide-btn${idx}`);
-                        let label = $item.getAttribute('name');
+                        $label.className = 'onui-label';
                         $label.textContent = label !== undefined ? label : parseHTMLcode('&nbsp;');
 
                         const $btn = document.createElement('onui-hide-btn');
@@ -389,10 +392,17 @@ class OnUI {
                         $chbox.setAttribute('id', `${id}-hide-btn${idx}`);
                         $chbox.setAttribute('type', 'checkbox');
                         $chbox.classList.add('onui-hide-checkbox');
-                        $chbox.checked = $item.selected;
+                        $chbox.checked = $option.selected;
 
-                        $item.insertAdjacentElement("beforebegin", $label);
-                        $item.insertAdjacentElement("beforebegin", $chbox);
+                        let name = $option.getAttribute('name');
+                        let $item = document.querySelector(`#${name}`);
+                        if($item === null) $item = document.createElement('div');
+                        $item.classList.add('onui-accordion-item');
+
+                        $option.insertAdjacentElement("beforebegin", $label);
+                        $option.insertAdjacentElement("beforebegin", $chbox);
+                        $option.insertAdjacentElement("beforebegin", $item);
+                        $option.style.display = 'none';
 
                         if (!$chbox.checked) {
                             $btn.textContent = parseHTMLcode('&#9660;');
@@ -402,15 +412,15 @@ class OnUI {
                         $chbox.addEventListener('input', function () {
                             const isShow = $chbox.checked;
 
-                            $elem.querySelectorAll('.onui-accordion-item').forEach(function ($elem) {
-                                $elem.style.display = 'none';
-                            })
-                            $elem.querySelectorAll('.onui-hide-checkbox').forEach(function ($elem) {
-                                $elem.checked = false;
-                            })
-                            $elem.querySelectorAll('onui-hide-btn').forEach(function ($elem) {
-                                $elem.textContent = parseHTMLcode('&#9660;');
-                            })
+                            // $elem.querySelectorAll('.onui-accordion-item').forEach(function ($elem) {
+                            //     $elem.style.display = 'none';
+                            // })
+                            // $elem.querySelectorAll('.onui-hide-checkbox').forEach(function ($elem) {
+                            //     $elem.checked = false;
+                            // })
+                            // $elem.querySelectorAll('onui-hide-btn').forEach(function ($elem) {
+                            //     $elem.textContent = parseHTMLcode('&#9660;');
+                            // })
 
                             $chbox.checked = isShow
                             if (isShow) {
@@ -470,29 +480,35 @@ class OnUI {
                 let tabSeleted = 0;
 
                 $elem.querySelectorAll('option')
-                    .forEach(($item, idx) => {
-                        $item.classList.add('onui-tab-item');
-                        $elem.appendChild($item);
+                    .forEach(($option, idx) => {
+                        // $elem.appendChild($option);
 
                         // セレクタ
                         const $selectorBox = document.createElement('onui-selector-box');
 
+                        let label = $option.value;
                         const $label = document.createElement('label');
                         $label.setAttribute('for', `${id}-tab-btn${idx}`);
-                        // $label.classList.add('onui-tab-label');
-                        let label = $item.getAttribute('name');
+                        $label.classList = 'onui-tab-label';
                         $label.textContent = label !== undefined ? label : parseHTMLcode('&nbsp;');
 
                         const $radioBtn = document.createElement('input');
                         $radioBtn.setAttribute('id', `${id}-tab-btn${idx}`);
                         $radioBtn.setAttribute('type', 'radio');
                         $radioBtn.setAttribute('name', id);
-                        $radioBtn.checked = $item.selected;
+                        $radioBtn.checked = $option.selected;
                         if ($radioBtn.checked) tabSeleted++;
+
+                        let name = $option.getAttribute('name');
+                        let $item = document.querySelector(`#${name}`);
+                        if($item === null) $item = document.createElement('div');
+                        $item.classList.add('onui-tab-item');
+                        $elem.appendChild($item);
 
                         $selectorBox.appendChild($radioBtn);
                         $selectorBox.appendChild($label);
                         $selectors.append($selectorBox);
+                        $option.style.display = 'none';
 
                         if (!$radioBtn.checked) {
                             $item.style.display = 'none';
@@ -517,7 +533,7 @@ class OnUI {
                 // selectedが指定されなかった場合は1つめを選択状態にする
                 if (tabSeleted === 0) {
                     $selectors.querySelector('input[type="radio"]').checked = true;
-                    $elem.querySelector('option').style.display = 'block';
+                    $elem.querySelector('.onui-tab-item').style.display = 'block';
                 }
 
                 if ($elem.style.length > 0) {

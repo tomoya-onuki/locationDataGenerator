@@ -1,3 +1,6 @@
+/* Copyright (c) 2023 Tomoya Onuki */
+/* This software is released under the MIT License, see LICENSE. */
+
 /* toggle switch */
 onui[type="toggle-switch"] {
     display: inline-block;
@@ -180,7 +183,7 @@ onui[type="accordion"] {
     margin: 0 0 10px 0;
 }
 
-onui[type="accordion"] label {
+onui[type="accordion"] label.onui-label {
     display: block;
     position: relative;
     margin: 0;
@@ -192,7 +195,7 @@ onui[type="accordion"] label {
     cursor: pointer;
 }
 
-onui[type="accordion"] label:hover {
+onui[type="accordion"] label.onui-label:hover {
     background: #eee;
 }
 
@@ -233,7 +236,7 @@ onui[type="tab"] onui-selector-box {
     margin: 0;
 }
 
-onui[type="tab"] onui-selector-box label {
+onui[type="tab"] onui-selector-box label.onui-tab-label {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -244,12 +247,12 @@ onui[type="tab"] onui-selector-box label {
     text-align: center;
 }
 
-onui[type="tab"] onui-selector-box input[type='radio']+label {
+onui[type="tab"] onui-selector-box input[type='radio']+label.onui-tab-label {
     border: none 1px;
     border-bottom: #444 1px solid;
 }
 
-onui[type="tab"] onui-selector-box input[type='radio']:checked+label {
+onui[type="tab"] onui-selector-box input[type='radio']:checked+label.onui-tab-label {
     border: none 1px;
     border-top: #444 1px solid;
     border-right: #444 1px solid;
