@@ -28,13 +28,13 @@ h2 {
 
 #ui {
     position: fixed;
-    top: 0;
+    top: 50px;
     left: 0;
     width: 220px;
-    height: 100vh;
+    height: calc(100vh - 50px);
     background: #fafafa;
     font-size: 80%;
-    padding: 10px 10px 0 20px;
+    padding: 0px 10px 0 20px;
     margin: 0;
 
     color: #111;
@@ -45,6 +45,18 @@ h2 {
 
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0px 0px 0px 0px;
+    padding: 5px 10px 0px 25px;
+    height: 80px;
+    width: 220px;
+    background: #fdfdfd;
+    font-size: 80%;
 }
 
 #ui::-webkit-scrollbar {
@@ -58,7 +70,7 @@ h2 {
 
 #ui .pane {
     position: relative;
-    margin: 10px 0px 30px 5px;
+    margin: 10px 0px 30px 0px;
     width: 90%;
     /* margin: 0px 0px 30px 20px; */
 }
@@ -120,8 +132,8 @@ h2 {
 }
 
 .traj-item {
-    margin: 8px 0px;
-    height: 18px;
+    margin: 0px;
+    /* height: 18px; */
 }
 
 .traj-item input[type="color"] {

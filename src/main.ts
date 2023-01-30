@@ -164,7 +164,7 @@ class Main {
             if (type === 'umidori') ext = '.csv';
             if (type === 'axyvis') ext = '.txt';
             this.chart.save(type, $fileIntegrate.checked).forEach((str, i) => {
-                let fname = $fileIntegrate.checked ? `traj.${ext}` : `traj${i}${ext}`;
+                let fname = $fileIntegrate.checked ? `traj${ext}` : `traj${i}${ext}`;
                 if (type === 'umidori') fname = 'umidori_auto_' + fname;
                 if (type === 'axyvis') fname = 'axy_auto_' + fname;
 
