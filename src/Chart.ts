@@ -1,6 +1,5 @@
 import mapboxgl, { GeoJSONSource } from 'mapbox-gl';
 import chroma from 'chroma-js';
-import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import { point } from '@turf/turf';
 import { TrajGroup } from './TrajGroup';
@@ -15,6 +14,7 @@ export class Chart {
     private trajID: number = 0;
     private _isInterpolation: boolean = false;
     private _interpolationReductionRate: number = 0.0;
+    private _visDateForm: boolean = false;
 
 
     constructor(_map: mapboxgl.Map) {
@@ -128,11 +128,7 @@ export class Chart {
         const bufAreaGeojson: any = {
             'type': 'FeatureCollection',
             'features': this._trajGroupList.map(trajGroup => {
-                return trajGroup.baseTraj.pointList.map(point => {
-                    let radius: number = this._pointBuff;
-                    let center: number[] = [point.lng, point.lat];
-                    return turfCircle(center, radius, { steps: 64, units: 'degrees' });
-                });
+                return trajGroup.baseTraj.circles(this._pointBuff);
             }).flat()
         };
 
@@ -213,12 +209,14 @@ export class Chart {
 
 
     public set visDateForm(flag: boolean) {
+        this._visDateForm = flag;
         this._trajGroupList.forEach(trajGroup => {
             trajGroup.visDateForm = flag;
         });
     }
 
     public addDateForm(firstDate: string, step: number, stepUnit: string) {
+        this.addingTrajGroup.visDateForm = this._visDateForm;
         this.addingTrajGroup.addDateForm(this.map, firstDate, step, stepUnit);
     }
 

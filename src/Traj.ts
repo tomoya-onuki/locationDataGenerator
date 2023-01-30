@@ -1,6 +1,7 @@
 import chroma from 'chroma-js';
 import turfBezierSpline from '@turf/bezier-spline';
 import { lineString } from '@turf/turf';
+import turfCircle from '@turf/circle';
 
 export class Traj {
     private _pointList: { lng: number, lat: number }[] = [];
@@ -120,6 +121,17 @@ export class Traj {
             }
         } else {
             return {};
+        }
+    }
+
+    public circles(radius: number): any {
+        if (this._vis) {
+            return this.pointList.map(point => {
+                let center: number[] = [point.lng, point.lat];
+                return turfCircle(center, radius, { steps: 64, units: 'degrees' });
+            });
+        } else {
+            return [];
         }
     }
 
