@@ -23,7 +23,7 @@
                 <span> | </span>
                 <a href="https://github.com/tomoya-onuki/locationDataGenerator" target="_blank">GitHub</a>
                 <span> | </span>
-                <span class="help">Help</span>
+                <span id="open-help-pane" class="help">Help</span>
             </div>
         </div>
     </div>
@@ -43,21 +43,16 @@
                     <onui type="toggle-switch" id="auto-color"></onui>
                     <label for="auto-color">Auto Color Scheme</label>
                 </div>
-            </div>
 
-            <div class="container">
                 <div>
                     <onui type="toggle-switch" id="interpolation"></onui>
                     <label for="interpolation">Interpolation</label>
                 </div>
-
-                <div>
-                    <label for="rediction-rate">Reduction : <span>0</span> %</label>
-                    <input type="range" id="rediction-rate" min="0" max="100" value="0" step="1">
-                </div>
             </div>
 
             <div class="container">
+                <label for="rediction-rate">Reduction : <span>0</span> %</label>
+                <input type="range" id="rediction-rate" min="0" max="100" value="0" step="1">
                 <label for="point-buff">Buffer : <span>0</span> deg</label>
                 <input type="range" id="point-buff" min="0" max="1.0" value="0" step="0.01">
                 <label for="trajectory-num">Traj-N : <span>1</span></label>
@@ -72,23 +67,21 @@
             <div class="container">
                 <div>
                     <onui type="toggle-switch" id="date-form-on"></onui>
-                    <label for="date-form-on">Date Form</label>
-                </div>
+                    <label for="date-form-on" style="margin-right: 15px;">Label</label>
 
-                <div>
-                    <onui type="toggle-switch" id="time-gradient"></onui>
-                    <label for="time-gradient">Time Encoding</label>
+                    <onui type="toggle-switch" id="time-gradient" ></onui>
+                    <label for="time-gradient">Gradient</label>
                 </div>
             </div>
 
             <div class="container">
-                <div>Begin</div>
+                <span class="label">Begin</span>
                 <input type="date" id="first-date">
                 <input type="time" id="first-time" value="00:00:00" step="1">
             </div>
 
             <div class="container">
-                <div>Step</div>
+                <span class="label">Step</span>
                 <input type="number" id="date-step" value="1">
                 <select id="date-step-unit">
                     <option value="ms">msec</option>
@@ -157,6 +150,11 @@
 
     <div id="traj-modal">
         <button id="traj-register">OK (enter)</button>
+    </div>
+
+    <div id="help-pane">
+        <div id="close-help-pane">&times;</div>
+        <iframe src="https://www.youtube.com/embed/wnvqmnDQmRg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 </body>
 
