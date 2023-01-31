@@ -137,14 +137,6 @@ class Main {
         const $dateFormOn: HTMLInputElement = <HTMLInputElement>document.querySelector('#date-form-on');
         $dateFormOn.addEventListener('input', () => {
             this.chart.visDateForm = $dateFormOn.checked;
-            document.querySelectorAll('.traj-date-form').forEach($elem => {
-                let $clone = <HTMLElement>($elem);
-                if ($dateFormOn.checked) {
-                    $clone.style.display = 'block';
-                } else {
-                    $clone.style.display = 'none';
-                }
-            });
         });
 
         // 時刻フォームのスケーリング
@@ -175,6 +167,13 @@ class Main {
                 link.click();
             });
         });
+
+
+        const $helpPane: HTMLElement = <HTMLElement>document.querySelector('#help-pane');
+        const $openHelpPane: HTMLElement = <HTMLElement>document.querySelector('#open-help-pane');
+        $openHelpPane.addEventListener('click', () => $helpPane.style.display = 'block');
+        const $closeHelpPane: HTMLElement = <HTMLElement>document.querySelector('#close-help-pane');
+        $closeHelpPane.addEventListener('click', () => $helpPane.style.display = 'none');
     }
 
 

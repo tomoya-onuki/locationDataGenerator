@@ -434,8 +434,6 @@ export class Chart {
                     };
                 });
                 let subColor = chroma(trajGroup.color).alpha(0.2).hex();
-                console.log(baseColor)
-                console.log(subColor)
                 let subTrajJson = trajGroup.subTrajList.map(subTraj => {
                     return subTraj.pointList.map((point, idx) => {
                         let date = trajGroup.baseTraj.dateList[idx];
@@ -456,7 +454,7 @@ export class Chart {
                 return [baseTrajJson, ...subTrajJson];
             }
             else {
-                let savePointList = trajGroup.baseTraj.interPolationPointList;
+                let savePointList = trajGroup.baseTraj.interpolationPointList;
                 let dateList = trajGroup.baseTraj.dateList;
 
                 // 時刻を持つ点間の分割数
@@ -493,7 +491,7 @@ export class Chart {
                 });
                 let subColor = chroma(trajGroup.color).alpha(0.2).hex();
                 let subTrajJson = trajGroup.subTrajList.map(subTraj => {
-                    let savePointList = subTraj.interPolationPointList;
+                    let savePointList = subTraj.interpolationPointList;
                     return savePointList.map((point, idx) => {
                         let date = interpolateDateList[idx];
                         return {

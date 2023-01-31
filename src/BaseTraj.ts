@@ -6,6 +6,9 @@ export class BaseTraj extends Traj {
     private _$dateFormList: HTMLElement[] = [];
     private _visDateForm: boolean = false;
 
+    public get $dateFormList() {
+        return this._$dateFormList;
+    }
 
     public setDate(idx: number, date: number) {
         this._dateList[idx] = date;
@@ -14,18 +17,29 @@ export class BaseTraj extends Traj {
     public get dateList() {
         return this._dateList;
     }
-
-    public get $dateFormList() {
-        return this._$dateFormList;
+    public override set vis(flag: boolean) {
+        this._vis = flag;
+        this.changeDateFormVis();
     }
 
     public set visDateForm(flag: boolean) {
         this._visDateForm = flag;
+        this.changeDateFormVis();
+    }
+
+    private changeDateFormVis() {
+        this._$dateFormList.forEach($dateForm => {
+            if (this._vis && this._visDateForm) {
+                $dateForm.style.display = 'block';
+            } else if (!this._vis || !this._visDateForm) {
+                $dateForm.style.display = 'none';
+            }
+        });
     }
 
     public addDateForm(map: mapboxgl.Map, firstDate: string, step: number, stepUnit: string) {
         let date: Dayjs = dayjs(firstDate);
-        this.pointList.forEach((point, j) => {
+        this._pointList.forEach((point, j) => {
             let pixel = map.project([point.lng, point.lat]);
 
             // let id = `traj-date-form-${this.id}-${j}`
@@ -55,8 +69,8 @@ export class BaseTraj extends Traj {
             const $body: HTMLElement = <HTMLElement>document.querySelector('body');
             $body.appendChild($dateForm);
 
-            this.$dateFormList.push($dateForm);
-            this.dateList.push(date.valueOf());
+            this._$dateFormList.push($dateForm);
+            this._dateList.push(date.valueOf());
 
             date = date.add(step, <ManipulateType>stepUnit);
         });
@@ -64,7 +78,7 @@ export class BaseTraj extends Traj {
 
     public translateDateForm(map: mapboxgl.Map) {
         this._$dateFormList.forEach(($dateForm, i) => {
-            let pixel = map.project([this.pointList[i].lng, this.pointList[i].lat]);
+            let pixel = map.project([this._pointList[i].lng, this._pointList[i].lat]);
             $dateForm.style.top = pixel.y + 'px';
             $dateForm.style.left = pixel.x + 'px';
         });
