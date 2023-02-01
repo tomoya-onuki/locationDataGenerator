@@ -315,7 +315,10 @@ export class Chart {
                             const json1 = jsonList[i + 1];
                             let date = dayjs(json0.date).format('DD-MMM-YYYY,HH:mm:ss');
                             
-                            let speed: number = turfDistance(point([json0.lng, json0.lat]), point([json1.lng, json1.lat])) / Number(dayjs(json0.date).diff(dayjs(json1.date), 'hour'));
+                            let dist = turfDistance(point([json0.lng, json0.lat]), point([json1.lng, json1.lat]));
+                            let time = Number(dayjs(json1.date).diff(dayjs(json0.date), 'hour'));
+                            let speed: number = dist / time;
+                            console.log(`${speed} = ${dist} / ${time}`);
                             csvStr += `${date}\t${json0.lng}\t${json0.lat}\t${speed}\n`;
                         }
                         return csvStr;
@@ -328,7 +331,7 @@ export class Chart {
                             const json1 = jsonList[i + 1];
                             let date = dayjs(json0.date).format('DD-MMM-YYYY,HH:mm:ss');
                             
-                            let speed: number = turfDistance(point([json0.lng, json0.lat]), point([json1.lng, json1.lat])) / Number(dayjs(json0.date).diff(dayjs(json1.date), 'hour'));
+                            let speed: number = turfDistance(point([json0.lng, json0.lat]), point([json1.lng, json1.lat])) / Number(dayjs(json1.date).diff(dayjs(json0.date), 'hour'));
                             csvStr += `${date}\t${json0.lng}\t${json0.lat}\t${speed}\n`;
                         }
                         csvStr += '\n';

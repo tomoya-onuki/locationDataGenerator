@@ -10,9 +10,9 @@ export class BaseTraj extends Traj {
         return this._$dateFormList;
     }
 
-    public setDate(idx: number, date: number) {
-        this._dateList[idx] = date;
-    }
+    // public setDate(idx: number, date: number) {
+    //     this._dateList[idx] = date;
+    // }
 
     public get dateList() {
         return this._dateList;
@@ -58,11 +58,10 @@ export class BaseTraj extends Traj {
             $dateFormTime.setAttribute('step', '1');
             $dateFormTime.value = date.format('HH:mm:ss');
             const setDate = () => {
-                let date = dayjs(`${$dateFormDate.value} ${$dateFormTime.value}`).valueOf();
-                this.setDate(j, date);
+                this.dateList[j] = dayjs(`${$dateFormDate.value} ${$dateFormTime.value}`).valueOf();
             };
             $dateFormDate.addEventListener('input', () => setDate());
-            $dateFormDate.addEventListener('input', () => setDate());
+            $dateFormTime.addEventListener('input', () => setDate());
 
             $dateForm.appendChild($dateFormDate);
             $dateForm.appendChild($dateFormTime);
