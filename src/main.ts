@@ -1,6 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import chroma from 'chroma-js';
 import dayjs from 'dayjs';
+import JSZip from 'jszip';
 import { Chart } from './Chart';
 // import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -155,15 +156,20 @@ class Main {
             let ext = '.' + type;
             if (type === 'umidori') ext = '.csv';
             if (type === 'axyvis') ext = '.txt';
+
+            let jszip: JSZip = new JSZip();
+
             this.chart.save(type, $fileIntegrate.checked).forEach((str, i) => {
                 let fname = $fileIntegrate.checked ? `traj${ext}` : `traj${i}${ext}`;
                 if (type === 'umidori') fname = 'umidori_auto_' + fname;
                 if (type === 'axyvis') fname = 'axy_auto_' + fname;
 
-                let blob = new Blob(str.split(''), { type: "text/plan" });
+                jszip.file(fname, str);
+            });
+            jszip.generateAsync({ type: 'blob' }).then((blob) => { // Blob の取得
                 let link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = fname;
+                link.download = 'trajectories.zip';
                 link.click();
             });
         });
