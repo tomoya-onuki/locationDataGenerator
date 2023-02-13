@@ -105,6 +105,10 @@ class Main {
                 });
             }
         });
+        window.addEventListener('beforeunload', (event) => {
+            event.preventDefault();
+            event.returnValue = '';
+          });
 
         // 軌跡の自動配色のON/OFF
         const $autoColorScheme: HTMLInputElement = <HTMLInputElement>document.querySelector('#auto-color');
