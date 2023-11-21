@@ -7,6 +7,7 @@ import { Chart } from './Chart';
 // import 'mapbox-gl/dist/mapbox-gl.css';
 dotenv.config()
 mapboxgl.accessToken = String(process.env.MAPBOX_GL_ACCESS_TOKEN);
+console.log(process.env.MAPBOX_GL_ACCESS_TOKEN)
 
 window.addEventListener('load', () => {
     new Main().init();
