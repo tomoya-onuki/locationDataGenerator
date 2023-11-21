@@ -2,10 +2,11 @@ import mapboxgl from 'mapbox-gl';
 import chroma from 'chroma-js';
 import dayjs from 'dayjs';
 import JSZip from 'jszip';
+import * as dotenv from 'dotenv'
 import { Chart } from './Chart';
 // import 'mapbox-gl/dist/mapbox-gl.css';
-
-mapboxgl.accessToken = 'pk.eyJ1Ijoib251dG9tbyIsImEiOiJjbGQycHIwazMwYXh5M29tcW95Nm5tdmVxIn0.nK-_6PZCDCVPEYiLQANo7A';
+dotenv.config()
+mapboxgl.accessToken = String(process.env.MAPBOX_GL_ACCESS_TOKEN);
 
 window.addEventListener('load', () => {
     new Main().init();
