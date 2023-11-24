@@ -1,3 +1,5 @@
+const Dotenv = require('dotenv-webpack');
+
 module.exports = {
     // モード値を production に設定すると最適化された状態で、
     // development に設定するとソースマップ有効でJSファイルが出力される
@@ -24,6 +26,13 @@ module.exports = {
     },
     // import 文で .ts ファイルを解決するため
     resolve: {
-      extensions: [".ts", ".js"]
-    }
+      extensions: [".ts", ".js"],
+      // fallback: { 
+      //   crypto: false 
+      // }
+    },
+    plugins: [
+      // { systemvars: true } を設定するとシステム環境変数も読み込まれるようになる
+      new Dotenv({ systemvars: true }),
+    ]
   };
