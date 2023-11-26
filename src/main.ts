@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import JSZip from 'jszip';
 import { Chart } from './Chart';
 mapboxgl.accessToken = String(process.env.MAPBOX_GL_ACCESS_TOKEN);
+console.log(process.env.MAPBOX_GL_ACCESS_TOKEN)
 
 window.addEventListener('load', () => {
     new Main().init();
