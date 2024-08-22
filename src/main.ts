@@ -17,7 +17,7 @@ class Main {
     constructor() {
         this.map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/light-v10',
+            style: 'mapbox://styles/mapbox/streets-v11',
             center: [140, 42],
             zoom: 4
         });
@@ -176,20 +176,6 @@ class Main {
                 link.click();
             });
         });
-
-        // map style 変更イベント
-        const $mapStyleSlct: HTMLSelectElement = <HTMLSelectElement>document.querySelector('#map-style-slct');
-        const $body: HTMLBodyElement = <HTMLBodyElement>document.querySelector('body');
-        $mapStyleSlct.addEventListener('change', () => {
-            this.map.setStyle(`mapbox://styles/mapbox/${$mapStyleSlct.value}`);
-
-            if ($mapStyleSlct.value == 'light-v10' || $mapStyleSlct.value == 'streets-v12') {
-                $body.style.color = '#222';
-            } else if ($mapStyleSlct.value == 'dark-v10' || $mapStyleSlct.value == 'satellite-v9') {
-                $body.style.color = '#eee';
-            }
-        });
-
 
         const $helpPane: HTMLElement = <HTMLElement>document.querySelector('#help-pane');
         const $openHelpPane: HTMLElement = <HTMLElement>document.querySelector('#open-help-pane');
