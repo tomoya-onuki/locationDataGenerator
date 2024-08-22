@@ -107,7 +107,7 @@ class Main {
         window.addEventListener('beforeunload', (event) => {
             event.preventDefault();
             event.returnValue = '';
-          });
+        });
 
         // 軌跡の自動配色のON/OFF
         const $autoColorScheme: HTMLInputElement = <HTMLInputElement>document.querySelector('#auto-color');
@@ -175,6 +175,19 @@ class Main {
                 link.download = 'trajectories.zip';
                 link.click();
             });
+        });
+
+        // map style 変更イベント
+        const $mapStyleSlct: HTMLSelectElement = <HTMLSelectElement>document.querySelector('#map-style-slct');
+        const $body: HTMLBodyElement = <HTMLBodyElement>document.querySelector('body');
+        $mapStyleSlct.addEventListener('change', () => {
+            this.map.setStyle(`mapbox://styles/mapbox/${$mapStyleSlct.value}`);
+
+            if ($mapStyleSlct.value == 'light-v10' || $mapStyleSlct.value == 'streets-v12') {
+                $body.style.color = '#222';
+            } else if ($mapStyleSlct.value == 'dark-v10' || $mapStyleSlct.value == 'satellite-v9') {
+                $body.style.color = '#eee';
+            }
         });
 
 
